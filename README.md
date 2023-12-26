@@ -1,32 +1,24 @@
-# ATRAC-ROM
+# MD-ROM (Minidisc Data Encoder/Decoder)
 Adapt arbitrary files to be burn-ready for normal audio MiniDiscs.
 
 WebMiniDisc Pro v1.4.0 added the ability to burn ATRAC files (.aea) directly to MiniDiscs, provided the user has a NetMD enabled burner.
 
-This new homebrew feature allows for arbitrary data of any kind to be stored on an MD, without the need for the special Hi-MD model(s) that can already do so more easily. One can inject data into an existing .aea file using a hex editor, overwriting the sound data.
+This new homebrew feature allows for arbitrary data of any kind to be stored on an MD, without the need for the special Hi-MD models.
 
-There is a catch, however. 
+Note: This is not compatible with MD-Data discs/burners. This is designed for use with regular audio MiniDiscs to act like an MD-Data disc.
 
-The last 2 out of every 212 bytes of the 'sound' data get corrupted, and nothing more. It is unclear if the corruption occurs on the burning or the ripping of the track, nor is it clear whether it is the fault of the player, WebMiniDisc, or both.
+The goal of this program is to adapt an input file for burning onto an MD, as well as decoding a stored arbitrary file from an MD.
 
-Nonetheless, the goal of this program is to adapt an input file for burning onto an MD by working around those very consistent discrepancies.
-The adaptation also corrupts the file, but it does so losslessly. Therefore, the program also comes with a decoder which can undo the encoding.
+Encoding mechanism: 
+1. An ATRAC file header is written
+2. Two null bytes will be appended to the end of a group of 210 bytes from the original file (making it a group of 212 bytes). This ensures that the important data doesn't get corrupted, as it is those 2 unimportant bytes in every group that get corrupted.
+3. Store transformed data in a .aea file
+Note: if the number of bytes of the transformed data is not fully divisible by 212, null bytes will be added at the end of the file to ensure that it is.
 
-As of writing, this program is in a very alpha state and is more a proof of concept more than anything else. 
-It doesn't generate an ATRAC file or modify one. In fact, it doesn't have anything to do with ATRAC. It simply adapts a file which can later be manually injected into an ATRAC file using a hex editor.
+Decoder mechanism:
+1. Erases header
+2. Erases the last 2 bytes of every 212 byte soundgroup
+3. Stores decoded data in a .bin file
+Note: In most cases, there will be extraneous null bytes at the end of the decoded file due to the extraneous bytes purposefully added in the encoding process. This can cause problems for some files, such as
+zip files.
 
-Steps for encoding:
-1. Gather file of interest and the executable in one folder.
-2. Open the program.
-3. Enter 'E'.
-4. Enter in the exact number of bytes of the input file.
-5. Enter in the filename with the file extension.
-6. A file named 'newfile.bin' will be generated, and this is the adapted file.
-
-Steps for decoding:
-1. Gather adapted file and executable in one folder.
-2. Open the program.
-3. Enter 'D'.
-4. Enter in the exact number of bytes of the adapted file.
-5. Enter in the filename with the file extension.
-6. A file named 'decod.bin' will be generated, which functions as the original file before the encoding adaptation.
