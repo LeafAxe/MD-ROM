@@ -28,7 +28,7 @@ int main(){
 	return 0;
 }
 
-void writeheader(ofstream &outfile, string header){
+void writeheader(ofstream &outfile){
 	string header;
 	cout << "Enter desired ATRAC title (to appear as the official title on MD)\n";
 	cin >> header;
